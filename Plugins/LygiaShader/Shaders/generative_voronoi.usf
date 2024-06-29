@@ -1,0 +1,22 @@
+#pragma once
+#include "/LygiaShader/lygia/generative/voronoi.usf"
+float2 st;
+struct __Generativevoronoi
+{
+	float4 drawShader(float2 st)
+	{
+		
+		float4 color = float4(0.0, 0.0, 0.0, 1.0);
+		float2 pixel = 1.0/View.ViewSizeAndInvSize.xy;
+
+                
+		float d2 = voronoi(float2(st * 5. + View.GameTime));
+		float d3 = voronoi(float3(st * 5., View.GameTime));
+                
+		color += lerp(d2, d3, step(0.5, st.x));
+
+		return color;
+	}
+};
+__Generativevoronoi _edgeFilter;
+return _edgeFilter.drawShader(st);

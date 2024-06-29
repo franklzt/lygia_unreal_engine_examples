@@ -1,0 +1,15 @@
+/*
+description: Include all available easing animations
+*/
+
+#include "easing/back.usf"
+#include "easing/bounce.usf"
+#include "easing/circular.usf"
+#include "easing/cubic.usf"
+#include "easing/elastic.usf"
+#include "easing/exponential.usf"
+#include "easing/linear.usf"
+#include "easing/quadratic.usf"
+#include "easing/quartic.usf"
+#include "easing/quintic.usf"
+#include "easing/sine.usf"

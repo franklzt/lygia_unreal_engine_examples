@@ -1,0 +1,36 @@
+#include "/LygiaShader/lygia/color/brightnessContrast.usf"
+#include "/LygiaShader/lygia/color/brightnessMatrix.usf"
+#include "/LygiaShader/lygia/color/contrast.usf"
+#include "/LygiaShader/lygia/color/contrastMatrix.usf"
+Texture2D Tex;
+float2 st;
+float Brightness;
+float Contrast;
+struct __ColorbrightnessContrast
+{
+	float4 drawShader(Texture2D Tex,float2 st)
+	{
+		float4 color = float4(0.0, 0.0, 0.0, 1.0);
+		float2 pixel = 1.0/View.ViewSizeAndInvSize.xy;
+
+                
+		color = Tex.SampleGrad(TexSampler,st,ddx(st),ddy(st));
+
+		if ((1-st.y) < 0.33) {
+			color = brightnessContrast(color, Brightness, Contrast);
+		}
+		if ((1-st.y) < 0.66) {
+			float4x4 bc = mul(brightnessMatrix(Brightness), contrastMatrix(Contrast));
+			color = mul(bc, color);
+		}
+		else {
+			color = contrast(color, Contrast);
+			color = mul(brightnessMatrix(Brightness), color);
+		}
+
+		return color;
+	}
+};
+__ColorbrightnessContrast _edgeFilter;
+return _edgeFilter.drawShader(Tex,st);
+

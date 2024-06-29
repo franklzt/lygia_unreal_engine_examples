@@ -1,0 +1,24 @@
+{
+	"FileVersion": 3,
+	"Version": 1,
+	"VersionName": "1.0",
+	"FriendlyName": "LygiaShader",
+	"Description": "LYGIA Shader Library Example usage for unreal engine",
+	"Category": "CrazeGame",
+	"CreatedBy": "Frank lzt",
+	"CreatedByURL": "https://github.com/franklzt/lygia_unreal_engine_examples",
+	"DocsURL": "",
+	"MarketplaceURL": "",
+	"SupportURL": "",
+	"CanContainContent": true,
+	"IsBetaVersion": false,
+	"IsExperimentalVersion": false,
+	"Installed": false,
+	"Modules": [
+		{
+			"Name": "LygiaShader",
+			"Type": "Runtime",
+			"LoadingPhase": "Default"
+		}
+	]
+}

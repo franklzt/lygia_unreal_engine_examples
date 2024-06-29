@@ -1,0 +1,29 @@
+#pragma once
+#include "/LygiaShader/lygia/color/desaturate.usf"
+#include "/LygiaShader/lygia/color/saturationMatrix.usf"
+Texture2D Tex;
+float2 st;
+float Saturation;
+struct __ColorsaturationMatrix
+{
+	float4 drawShader(Texture2D Tex,float2 st)
+	{
+		float4 color = float4(0.0, 0.0, 0.0, 1.0);
+		float2 pixel = 1.0/View.ViewSizeAndInvSize.xy;
+
+                
+		color = Tex.SampleGrad(TexSampler,st,ddx(st),ddy(st));
+
+		if (st.y < 0.5) 
+			color = desaturate(color, 1.0-Saturation);
+		else
+			color = mul(saturationMatrix(Saturation), color);
+		
+		return color;
+	}
+};
+__ColorsaturationMatrix _edgeFilter;
+return _edgeFilter.drawShader(Tex,st);
+
+
+

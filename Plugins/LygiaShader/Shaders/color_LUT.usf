@@ -1,0 +1,20 @@
+#pragma once
+#include "/LygiaShader/lygia/color/lut.usf"
+Texture2D Tex;
+Texture2D LutTex;
+float2 st;
+#define LUT_SQUARE 1
+struct __Colorlut
+{
+
+	float4 drawShader(Texture2D Tex,float2 st)
+	{
+		float4 color = float4(0.0, 0.0, 0.0, 1.0);
+		float2 pixel = 1.0/View.ViewSizeAndInvSize.xy;
+		color = Tex.SampleGrad(TexSampler,st,ddx(st),ddy(st));
+		color = lut(LutTex,LutTexSampler, color,0);
+		return color;
+	}
+};
+__Colorlut _edgeFilter;
+return _edgeFilter.drawShader(Tex,st);

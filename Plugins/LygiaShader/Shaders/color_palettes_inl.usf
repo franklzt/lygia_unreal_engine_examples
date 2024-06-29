@@ -1,0 +1,5 @@
+#pragma once
+#include "/LygiaShader/lygia/color/palette/spectral.usf"
+#include "/LygiaShader/lygia/color/palette/fire.usf"
+#include "/Shaders/lygia/color/palette/heatmap.usf"
+#include "/Shaders/lygia/color/palette/hue.usf"

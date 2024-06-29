@@ -1,0 +1,27 @@
+/*
+description: Include all available color spaces conversions
+*/
+
+#include "space/rgb2hsv.usf"
+#include "space/hsv2rgb.usf"
+
+#include "space/rgb2yuv.usf"
+#include "space/yuv2rgb.usf"
+
+#include "space/rgb2yiq.usf"
+#include "space/yiq2rgb.usf"
+
+#include "space/rgb2YCbCr.usf"
+#include "space/YCbCr2rgb.usf"
+
+#include "space/rgb2YPbPr.usf"
+#include "space/YPbPr2rgb.usf"
+
+#include "space/linear2gamma.usf"
+#include "space/gamma2linear.usf"
+
+#include "space/rgb2cmyk.usf"
+#include "space/cmyk2rgb.usf"
+
+#include "space/w2rgb.usf"
+#include "space/k2rgb.usf"

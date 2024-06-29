@@ -1,0 +1,38 @@
+#include "/LygiaShader/lygia/filter/median.usf"
+#include "/LygiaShader/lygia/draw/stroke.usf"
+#include "/LygiaShader/lygia/draw/digits.usf"
+Texture2D Tex;
+float2 st;
+struct __Median
+{
+	float4 drawShader(Texture2D Tex,float2 st)
+	{
+		/*float4 color = float4(0.0, 0.0, 0.0, 1.0);
+		float2 pixel = 1.0/View.ViewSizeAndInvSize.xy;
+		float ix = floor(st.x * 5.0);
+		float kernel_size = max(1.0, ix * 4.0);
+		color = median(Tex,TexSampler, st, pixel, int(kernel_size));
+		color += digits(st - float2(ix/5.0 + 0.01, 0.01), kernel_size, 0.0);
+		color -= step(.98, frac(st.x * 5.0));
+		return color;*/
+
+		float4 color = float4(0.0, 0.0, 0.0, 1.0);
+		float2 pixel = 1.0/View.ViewSizeAndInvSize.xy;
+
+		float radius = frac(st.x * 2.0) * 4.0;
+
+		 color.rgb = lerp(   median3(Tex,TexSampler, st, pixel * max(1., floor(radius))).rgb,
+		                     median5(Tex,TexSampler,st, pixel * max(1., floor(radius))).rgb, 
+		                    step(.5, st.x));
+
+		color.rgb += digits(st - float2(0.01 + 0.5 * step(.5, st.x), 0.01), lerp(3., 5., step(.5, st.x)), 0.0);
+		color.rgb -= stroke(st.x, .5, pixel.x * 2.0);
+
+		color -= step(1.0 - pixel.x * 5., frac(radius)) * 0.1;
+
+		return color;
+	}
+};
+__Median _edgeFilter;
+return _edgeFilter.drawShader(Tex,st);
+

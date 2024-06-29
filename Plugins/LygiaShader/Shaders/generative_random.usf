@@ -1,0 +1,22 @@
+#pragma once
+#include "/LygiaShader/lygia/generative/random.usf"
+float2 st;
+struct __Generativerandom
+{
+ float4 drawShader(float2 st)
+ {
+ 
+  float4 color = float4(0.0, 0.0, 0.0, 1.0);
+  float2 pixel = 1.0/View.ViewSizeAndInvSize.xy;
+
+                
+  float d2 = random(float2(st * 5. + View.GameTime));
+  float d3 = random(float3(st * 5., View.GameTime));
+                
+  color += lerp(d2, d3, step(0.5, st.x));
+
+  return color;
+ }
+};
+__Generativerandom _edgeFilter;
+return _edgeFilter.drawShader(st);

@@ -1,0 +1,30 @@
+#pragma once
+#include "/LygiaShader/lygia/color/dither.usf"
+Texture2D Tex;
+float2 st;
+#define DITHER_FNC ditherVlachos
+struct __Colordither
+{
+	float4 drawShader(Texture2D Tex,float2 st)
+	{
+		float4 color = float4(0.0, 0.0, 0.0, 1.0);
+		float2 pixel = 1.0/View.ViewSizeAndInvSize.xy;
+		
+		// compress
+		const float c0 = 32.0;    
+		float2 its = lerp( float2(0.0, 0.0), float2(1.0, 1.0) / c0, st );
+		color.rgb += lerp(float3(its.x, its.x, its.x), float3(its.x, its.y, 0.0), step(st.y, sin(View.GameTime * 0.1)) );
+
+		color.rgb = dither(color.rgb, GetPixelPosition(Parameters));
+
+		// compress
+		color.rgb = floor( color.rgb * 255.0 ) / 255.0;
+		color.rgb *= c0;
+
+		return color;
+	}
+};
+__Colordither _edgeFilter;
+return _edgeFilter.drawShader(Tex,st);
+
+

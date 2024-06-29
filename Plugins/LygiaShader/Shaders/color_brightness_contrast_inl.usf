@@ -1,0 +1,6 @@
+#pragma once
+#include "/LygiaShader/lygia/color/brightnessContrast.usf"
+#include "/LygiaShader/lygia/color/brightnessMatrix.usf"
+#include "/LygiaShader/lygia/color/contrast.usf"
+#include "/LygiaShader/lygia/color/contrastMatrix.usf"
+

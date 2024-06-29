@@ -1,0 +1,47 @@
+#include "/LygiaShader/lygia/filter/radialBlur.usf"
+#include "/LygiaShader/lygia/draw/digits.usf"
+Texture2D Tex;
+float2 st;
+struct __RadianBlur
+{
+	float4 drawShader(Texture2D Tex,float2 st)
+	{
+		/*float4 color = float4(0.0, 0.0, 0.0, 1.0);
+		float2 pixel = 1.0/View.ViewSizeAndInvSize.xy;
+		float ix = floor(st.x * 5.0);
+		float kernel_size = max(1.0, ix * 4.0);
+		color = bilateralBlur2D(Tex,TexSampler, st, pixel, int(kernel_size));
+		color += digits(st - float2(ix/5.0 + 0.01, 0.01), kernel_size, 0.0);
+		color -= step(.98, frac(st.x * 5.0));*/
+
+		float4 color = float4(0.0, 0.0, 0.0, 1.0);
+		float2 pixel = 1.0/View.ViewSizeAndInvSize.xy;
+
+		float2 center = float2(0.5, 0.5);
+
+		float cols = 5.0;
+
+		float x = st.x * cols;
+		float xi = floor(x);
+		float xf = frac(x);
+		float strength = max(1.0, xi * 10.0);
+
+		float2 dir = st - center;
+		float angle = atan2(dir.y, dir.x);
+		angle += View.GameTime;
+		dir = float2(cos(angle), sin(angle));
+
+		color += radialBlur(Tex,TexSampler, st, pixel * dir, strength);
+
+		float2 uv = float2(frac(st.x * cols), st.y * cols) - 0.05;
+		uv *= 0.3;
+
+		color += digits(uv, strength, 0.0);
+		color -= step(.99, xf);
+
+		return color;
+	}
+};
+__RadianBlur _edgeFilter;
+return _edgeFilter.drawShader(Tex,st);
+

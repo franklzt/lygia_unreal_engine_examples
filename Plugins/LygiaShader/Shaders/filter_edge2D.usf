@@ -1,0 +1,24 @@
+#include "/LygiaShader/lygia/filter/edge.usf"
+#include "/LygiaShader/exampleDIgit.usf"
+Texture2D Tex;
+float2 st;
+struct __EdageFilter
+{
+	float4 drawShader(Texture2D Tex,float2 st)
+	{
+		float4 color = float4(0.0, 0.0, 0.0, 1.0);
+		float2 pixel = 1.0/View.ViewSizeAndInvSize.xy;
+		float ix = floor(st.x * 5.0);
+		float radius = max(0.1, ix * 0.5);
+		
+		if (st.y < 0.5)
+			color += edgePrewitt(Tex,TexSampler, st, pixel * radius);
+		else
+			color += edgeSobel(Tex,TexSampler, st, pixel * radius);
+		color = drawWidgetDigit(color,ix,st,radius);
+		return color;
+	}
+};
+__EdageFilter _edgeFilter;
+return _edgeFilter.drawShader(Tex,st);
+

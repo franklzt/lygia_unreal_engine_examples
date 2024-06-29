@@ -1,0 +1,31 @@
+#pragma once
+#include "/LygiaShader/lygia/color/mixOklab.usf"
+#include "/LygiaShader/lygia/math/mix.usf"
+#include "/LygiaShader/lygia/color/mixSpectral.usf"
+float2 st;
+float3 A;
+float3 B;
+struct __ColorMix
+{
+	float4 drawShader(float2 st)
+	{
+		
+		float4 color = float4(0.0,0.0,0.0,1.0);
+		float2 pixel = 1.0/View.ViewSizeAndInvSize.xy;
+		
+		//float3 A = float3(0.9333, 0.9451, 0.0588);
+		//float3 B = float3(0.0824, 0.1686, 0.5529);
+		float pct = st.x;
+
+		if (st.y < 0.33) 
+			color.rgb = mix(A, B, pct) ;
+		else if (st.y < 0.66)
+			color.rgb = mixOklab(A, B, pct);
+		else
+			color.rgb = mixSpectral(A, B, pct);
+
+		return color;
+	}
+};
+__ColorMix _edgeFilter;
+return _edgeFilter.drawShader(st);

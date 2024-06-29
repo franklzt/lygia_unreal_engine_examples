@@ -1,0 +1,23 @@
+#pragma once
+#include "/LygiaShader/lygia/color/vibrance.usf"
+Texture2D Tex;
+float2 st;
+float Vibrance;
+struct __Colorvibrance
+{
+ float4 drawShader(Texture2D Tex,float2 st)
+ {
+   float4 color = float4(0.0, 0.0, 0.0, 1.0);
+   float2 pixel = 1.0/View.ViewSizeAndInvSize.xy;
+
+                 
+   color = Tex.SampleGrad(TexSampler,st,ddx(st),ddy(st));
+
+   color = vibrance(color, Vibrance);
+                 
+   return color;
+ }
+};
+__Colorvibrance _edgeFilter;
+return _edgeFilter.drawShader(Tex,st);
+

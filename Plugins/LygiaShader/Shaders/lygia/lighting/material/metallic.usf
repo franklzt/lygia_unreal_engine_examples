@@ -1,0 +1,92 @@
+#include "albedo.usf"
+#include "specular.usf"
+#include "../../sampler.usf"
+
+/*
+contributors: Patricio Gonzalez Vivo
+description: Get material metalic property from GlslViewer's defines https://github.com/patriciogonzalezvivo/glslViewer/wiki/GlslViewer-DEFINES#material-defines
+use: float4 materialMetallic()
+options:
+    - SAMPLER_FNC(TEX, TEXSAMPLER,UV): optional depending the target version of GLSL (texture2D(...) or texture(...))
+license:
+    - Copyright (c) 2021 Patricio Gonzalez Vivo under Prosperity License - https://prosperitylicense.com/versions/3.0.0
+    - Copyright (c) 2021 Patricio Gonzalez Vivo under Patron License - https://lygia.xyz/license
+*/
+
+
+#ifdef MATERIAL_METALLICMAP
+uniform SAMPLER_TYPE MATERIAL_METALLICMAP;
+#endif
+
+#if defined(MATERIAL_ROUGHNESSMETALLICMAP) && !defined(MATERIAL_ROUGHNESSMETALLICMAP_UNIFORM)
+#define MATERIAL_ROUGHNESSMETALLICMAP_UNIFORM
+uniform SAMPLER_TYPE MATERIAL_ROUGHNESSMETALLICMAP;
+#endif
+
+#if defined(MATERIAL_OCCLUSIONROUGHNESSMETALLICMAP) && !defined(MATERIAL_OCCLUSIONROUGHNESSMETALLICMAP_UNIFORM)
+#define MATERIAL_OCCLUSIONROUGHNESSMETALLICMAP_UNIFORM
+uniform SAMPLER_TYPE MATERIAL_OCCLUSIONROUGHNESSMETALLICMAP;
+#endif
+    
+#ifndef FNC_MATERIAL_METALLIC
+#define FNC_MATERIAL_METALLIC
+
+#ifndef TOMETALLIC_MIN_REFLECTANCE
+#define TOMETALLIC_MIN_REFLECTANCE 0.04
+#endif
+
+float MetalictoMetallic(float3 diffuse, float3 specular, float maxSpecular) {
+    float perceivedDiffuse = sqrt(0.299 * diffuse.r * diffuse.r + 0.587 * diffuse.g * diffuse.g + 0.114 * diffuse.b * diffuse.b);
+    float perceivedSpecular = sqrt(0.299 * specular.r * specular.r + 0.587 * specular.g * specular.g + 0.114 * specular.b * specular.b);
+    if (perceivedSpecular < TOMETALLIC_MIN_REFLECTANCE) {
+        return 0.0;
+    }
+    float a = TOMETALLIC_MIN_REFLECTANCE;
+    float b = perceivedDiffuse * (1.0 - maxSpecular) / (1.0 - TOMETALLIC_MIN_REFLECTANCE) + perceivedSpecular - 2.0 * TOMETALLIC_MIN_REFLECTANCE;
+    float c = TOMETALLIC_MIN_REFLECTANCE - perceivedSpecular;
+    float D = max(b * b - 4.0 * a * c, 0.0);
+    return saturate((-b + sqrt(D)) / (2.0 * a));
+}
+
+float MetalictoMetallic(float3 diffuse, float3 specular) {
+    float maxSpecula = max(max(specular.r, specular.g), specular.b);
+    return MetalictoMetallic(diffuse, specular, maxSpecula);
+}
+
+
+
+
+float materialMetallic() {
+    float metallic = 0.0;
+
+#if defined(MATERIAL_METALLICMAP) && defined(MODEL_VERTEX_TEXCOORD)
+    float2 uv = v_texcoord.xy;
+    #if defined(MATERIAL_METALLICMAP_OFFSET)
+    uv += (MATERIAL_METALLICMAP_OFFSET).xy;
+    #endif
+    #if defined(MATERIAL_METALLICMAP_SCALE)
+    uv *= (MATERIAL_METALLICMAP_SCALE).xy;
+    #endif
+    metallic = SAMPLER_FNC(MATERIAL_METALLICMAP, uv).b;
+
+#elif defined(MATERIAL_ROUGHNESSMETALLICMAP) && defined(MODEL_VERTEX_TEXCOORD)
+    float2 uv = v_texcoord.xy;
+    metallic = SAMPLER_FNC(MATERIAL_ROUGHNESSMETALLICMAP, uv).b;
+
+#elif defined(MATERIAL_OCCLUSIONROUGHNESSMETALLICMAP) && defined(MODEL_VERTEX_TEXCOORD)
+    float2 uv = v_texcoord.xy;
+    metallic = SAMPLER_FNC(MATERIAL_OCCLUSIONROUGHNESSMETALLICMAP, uv).b;
+
+#elif defined(MATERIAL_METALLIC)
+    metallic = MATERIAL_METALLIC;
+
+#else
+    float3 diffuse = materialAlbedo().rgb;
+    float3 specular = materialSpecular();
+    metallic = MetalictoMetallic(diffuse, specular);
+#endif
+
+    return metallic;
+}
+
+#endif

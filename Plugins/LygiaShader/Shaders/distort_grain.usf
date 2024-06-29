@@ -1,0 +1,21 @@
+#pragma once
+#include "/LygiaShader/lygia/distort/grain.usf"
+#include "/LygiaShader/lygia/draw/digits.usf"
+Texture2D Tex;
+float2 st;
+struct __DistortGrain
+{
+	float4 drawShader(Texture2D Tex,float2 st)
+	{
+		
+		float4 color = float4(0.0, 0.0, 0.0, 1.0);
+		float2 pixel = 1.0/View.ViewSizeAndInvSize.xy;
+
+
+		color.rgb = grain(Tex,TexSampler, st, View.ViewSizeAndInvSize.xy, View.GameTime, 1.0);
+
+		return color;
+	}
+};
+__DistortGrain _edgeFilter;
+return _edgeFilter.drawShader(Tex,st);

@@ -1,0 +1,50 @@
+#include "/LygiaShader/lygia/space/scale.usf"
+#include "/LygiaShader/lygia/sample/sprite.usf"
+#include "/LygiaShader/lygia/animation/spriteLoop.usf"
+Texture2D Tex;
+float2 st;
+struct __AnimationSprite
+{
+	float4 drawShader(Texture2D Tex,float2 st)
+	{
+		float4 color = float4(0.0, 0.0, 0.0, 1.0);
+		float2 pixel = 1.0/View.ViewSizeAndInvSize.xy;
+
+
+		float2 grid = float2(10.0, 7.0);
+
+		// st = decimation(st, float2(50., 35.));
+		
+		color = Tex.SampleGrad(TexSampler,st,ddx(st),ddy(st));//tex2D(Tex,TexSampler, st);
+		// st = scale(st, 0.8);
+
+		// color = sampleSprite(Tex,TexSampler, st, grid, 41.);
+
+		// float time = u_time * 6.0;
+		float time = mod(View.GameTime * 6.0, 48.0);
+		if (time < 6.0)
+			color = spriteLoop(Tex,TexSampler, st, grid, 0., 2., time);
+		else if (time < 12.0)
+			color = spriteLoop(Tex,TexSampler, st, grid, 3., 6., time);
+		else if (time < 18.0)
+			color = spriteLoop(Tex,TexSampler, st, grid, 13., 16., time);
+		else if (time < 24.0)
+			color = spriteLoop(Tex,TexSampler, st, grid, 23., 26., time);
+		else if (time < 30.0)
+			color = spriteLoop(Tex,TexSampler, st, grid, 33., 36., time);
+		else if (time < 36.0)
+			color = spriteLoop(Tex,TexSampler, st, grid, 43., 46., time);
+		else if (time < 42.0)
+			color = spriteLoop(Tex,TexSampler, st, grid, 50., 53., time);
+		else
+			color = spriteLoop(Tex,TexSampler, st, grid, 60., 65., time);
+				
+
+		return color;
+	}
+};
+__AnimationSprite _edgeFilter;
+return _edgeFilter.drawShader(Tex,st);
+
+
+

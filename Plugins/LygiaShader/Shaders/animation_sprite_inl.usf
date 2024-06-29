@@ -1,0 +1,4 @@
+#pragma once
+#include "/LygiaShader/lygia/space/scale.usf"
+#include "/LygiaShader/lygia/sample/sprite.usf"
+#include "/LygiaShader/lygia/animation/spriteLoop.usf"

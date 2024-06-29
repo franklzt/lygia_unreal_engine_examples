@@ -1,0 +1,7 @@
+#pragma once
+#include "/LygiaShader/lygia/draw/circle.usf"
+#include "/LygiaShader/lygia/space/ratio.usf"
+#include "/LygiaShader/lygia/space/scale.usf"
+#include "/LygiaShader/lygia/animation/easing.usf"
+
+

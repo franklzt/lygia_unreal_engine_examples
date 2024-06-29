@@ -1,0 +1,30 @@
+#pragma once
+#include "/LygiaShader/lygia/color/palette/spectral.usf"
+#include "/LygiaShader/lygia/color/palette/fire.usf"
+#include "/LygiaShader/lygia/color/palette/heatmap.usf"
+#include "/LygiaShader/lygia/color/palette/hue.usf"
+Texture2D Tex;
+float2 st;
+struct __ColorpaletteShader
+{
+	float4 drawShader(Texture2D Tex,float2 st)
+	{
+		float4 color = float4(0.0, 0.0, 0.0, 1.0);
+		float2 pixel = 1.0/View.ViewSizeAndInvSize.xy;
+		
+		float pct = st.x;
+
+		if (st.y < 0.25) 
+			color.rgb = hue(pct,st.y);
+		else if (st.y < 0.5)
+			color.rgb = spectral(pct);
+		else if (st.y < 0.75)
+			color.rgb = heatmap(pct);
+		else
+			color.rgb = fire(pct);
+
+		return color;
+	}
+};
+__ColorpaletteShader _edgeFilter;
+return _edgeFilter.drawShader(Tex,st);

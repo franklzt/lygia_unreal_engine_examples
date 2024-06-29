@@ -1,0 +1,21 @@
+#pragma once
+#include "/LygiaShader/lygia/generative/noised.usf"
+float2 st;
+struct __Generativenoised
+{
+	float4 drawShader(float2 st)
+	{
+		float4 color = float4(0.0, 0.0, 0.0, 1.0);
+		float2 pixel = 1.0/View.ViewSizeAndInvSize.xy;
+
+
+		float2 d2 = noised(float2(st * 5. + View.GameTime)).yz * 0.5 + 0.5;
+		float3 d3 = noised(float3(st * 5., View.GameTime)).yzw * 0.5 + 0.5;
+                
+		color.rgb += lerp(float3(d2,0.0), d3, step(0.5, st.x));
+                
+		return color;
+	}
+};
+__Generativenoised _edgeFilter;
+return _edgeFilter.drawShader(st);

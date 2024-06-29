@@ -1,0 +1,37 @@
+#include "/LygiaShader/lygia/filter/noiseBlur.usf"
+#include "/LygiaShader/lygia/draw/digits.usf"
+Texture2D Tex;
+float2 st;
+struct __NoiseBlur
+{
+	float4 drawShader(Texture2D Tex,float2 st)
+	{
+		/*float4 color = float4(0.0, 0.0, 0.0, 1.0);
+		float2 pixel = 1.0/View.ViewSizeAndInvSize.xy;
+		float ix = floor(st.x * 5.0);
+		float kernel_size = max(1.0, ix * 4.0);
+		color = bilateralBlur2D(Tex,TexSampler, st, pixel, int(kernel_size));
+		color += digits(st - float2(ix/5.0 + 0.01, 0.01), kernel_size, 0.0);
+		color -= step(.98, frac(st.x * 5.0));*/
+
+
+
+		float4 color = float4(0.0, 0.0, 0.0, 1.0);
+		float2 pixel = 1.0/View.ViewSizeAndInvSize.xy;
+
+		float ix = floor(st.x * 5.0);
+		float radius = max(1.0, ix * 4.0);
+
+		color.rgb += noiseBlur(Tex,TexSampler, st, pixel, radius).rgb;
+
+		color += digits(st - float2(ix/5.0 + 0.01, 0.01), radius, 0.0);
+		color -= step(.99, frac(st.x * 5.0));
+
+
+		
+		return color;
+	}
+};
+__NoiseBlur _edgeFilter;
+return _edgeFilter.drawShader(Tex,st);
+

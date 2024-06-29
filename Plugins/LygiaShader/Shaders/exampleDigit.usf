@@ -1,0 +1,10 @@
+﻿#pragma once
+#include "/LygiaShader/lygia/draw/digits.usf"
+float4 drawWidgetDigit(float4 inColor,float ix,float2 st,float radius)
+{
+	inColor -= step(1.-st.y, 0.05) * 0.5;
+	inColor = clamp(inColor, float4(0., 0., 0., 1.), float4(1., 1., 1., 1.));
+	inColor += digits(st - float2(ix/5.0 + 0.01, 0.965), radius);
+	inColor -= step(.98, frac(st.x * 5.0));
+	return inColor;
+}

@@ -1,0 +1,39 @@
+#pragma once
+#include "/LygiaShader/lygia/color/daltonize.usf"
+Texture2D Tex;
+float2 st;
+struct __Colordaltonize
+{
+	float4 drawShader(Texture2D Tex,float2 st)
+	{
+		float4 color = float4(0.0, 0.0, 0.0, 1.0);
+		float2 pixel = 1.0/View.ViewSizeAndInvSize.xy;
+		color = Tex.SampleGrad(TexSampler,st,ddx(st),ddy(st));
+		int colorblind_type = int(View.GameTime) % 11;
+		if (colorblind_type == 0)
+			color = daltonizeProtanope(color);
+		else if (colorblind_type == 1)
+			color = daltonizeProtanopia(color);
+		else if (colorblind_type == 2)
+			color = daltonizeProtanomaly(color);
+		else if (colorblind_type == 3)
+			color = daltonizeDeuteranope(color);
+		else if (colorblind_type == 4)
+			color = daltonizeDeuteranopia(color);
+		else if (colorblind_type == 5)
+			color = daltonizeDeuteranomaly(color);
+		else if (colorblind_type == 6)
+			color = daltonizeTritanope(color);
+		else if (colorblind_type == 7)
+			color = daltonizeTritanopia(color);
+		else if (colorblind_type == 8)
+			color = daltonizeTritanomaly(color);
+		else if (colorblind_type == 9)
+			color = daltonizeAchromatopsia(color);
+		else if (colorblind_type == 10)
+			color = daltonizeAchromatomaly(color);
+		return color;
+	}
+};
+__Colordaltonize _edgeFilter;
+return _edgeFilter.drawShader(Tex,st);

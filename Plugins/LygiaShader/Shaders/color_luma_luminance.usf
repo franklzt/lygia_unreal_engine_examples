@@ -1,0 +1,32 @@
+#pragma once
+#include "/LygiaShader/lygia/color/luma.usf"
+#include "/LygiaShader/lygia/color/luminance.usf"
+#include "/LygiaShader/lygia/color/space.usf"
+Texture2D Tex;
+float2 st;
+struct __ColorLumaLuminance
+{
+	float4 drawShader(Texture2D Tex,float2 st)
+	{
+		float4 color = float4(0.0, 0.0, 0.0, 1.0);
+		float2 pixel = 1.0/View.ViewSizeAndInvSize.xy;
+		
+		color = Tex.SampleGrad(TexSampler,st,ddx(st),ddy(st));
+
+		color = gamma2linear(color);
+
+		if (st.y < 0.5) {
+			float l = luma(color);
+			color.rgb = float3(l, l, l);
+		}
+		else {
+			float l = luminance(color);
+			color.rgb = float3(l, l, l);
+		}
+		color = linear2gamma(color);
+		return color;
+	}
+};
+__ColorLumaLuminance _edgeFilter;
+return _edgeFilter.drawShader(Tex,st);
+
