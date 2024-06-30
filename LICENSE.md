@@ -1,7 +1,11 @@
 # The Prosperity Public License 3.0.0
 
-Contributor: Franklzt
+contributors: Patricio Gonzalez Vivo 
+https://github.com/franklzt/lygia_unreal_engine_examples/Plugins/LygiaShader/Shaders/lygia/
+https://github.com/franklzt/lygia_unreal_engine_examples/Plugins/LygiaShader/Content/Images/
 
+
+Contributor: Franklzt
 Source Code: https://github.com/franklzt/lygia_unreal_engine_examples
 
 ## Purpose
